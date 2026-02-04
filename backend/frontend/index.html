@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SatyaMed</title>
+</head>
+<body>
+  <h2>SatyaMed</h2>
+
+  <!-- ================= VERIFY MESSAGE ================= -->
+  <h3>Verify Health Message</h3>
+  <textarea id="text" rows="4" cols="40"
+    placeholder="Paste health message here"></textarea><br><br>
+  <button onclick="verify()">Verify</button>
+
+  <pre id="result"></pre>
+
+  <hr>
+
+  <!-- ================= ASK SAFETY ================= -->
+  <h3>Ask Medicine Safety Question</h3>
+  <input id="question" size="40"
+    placeholder="e.g. Can I take antibiotics for cold?"><br><br>
+  <button onclick="askSafety()">Ask</button>
+
+  <pre id="safetyResult"></pre>
+
+  <hr>
+
+  <!-- ================= SCAN IMAGE ================= -->
+  <h3>Scan Medicine Strip</h3>
+  <input type="file" id="imageInput"><br><br>
+  <button onclick="scanImage()">Scan Image</button>
+
+  <pre id="imageResult"></pre>
+
+<script>
+const BASE_URL = ""; 
+
+function setSharedText(t){
+  document.getElementById("text").value = t;
+}
+
+// -------- VERIFY MESSAGE --------
+async function verify(){
+  let text = document.getElementById("text").value;
+
+  let res = await fetch("/check_text",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({text:text})
+  });
+
+  let data = await res.json();
+  document.getElementById("result").innerText =
+    JSON.stringify(data,null,2);
+}
+
+// -------- ASK SAFETY --------
+async function askSafety(){
+  let q = document.getElementById("question").value;
+
+  let res = await fetch("/ask_safety",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({question:q})
+  });
+
+  let data = await res.json();
+  document.getElementById("safetyResult").innerText =
+    JSON.stringify(data,null,2);
+}
+
+// -------- SCAN IMAGE --------
+async function scanImage(){
+  let file = document.getElementById("imageInput").files[0];
+
+  let formData = new FormData();
+  formData.append("file", file);
+
+  let res = await fetch("/check_image",{
+    method:"POST",
+    body: formData
+  });
+
+  let data = await res.json();
+  document.getElementById("imageResult").innerText =
+    JSON.stringify(data,null,2);
+}
+</script>
+
+</body>
+</html>
