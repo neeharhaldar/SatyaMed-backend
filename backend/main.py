@@ -11,7 +11,7 @@ import os
 
 # --- CONFIGURATION ---
 # Replace with your actual key
-API_KEY = ""
+API_KEY = os.getenv("GEMINI_API_KEY")
 
 client = genai.Client(api_key=API_KEY)
 
