@@ -11,7 +11,7 @@ import os
 
 # --- CONFIGURATION ---
 # Replace with your actual key
-API_KEY = "AIzaSyCNLdpfDCRQMm8CYL61Z7tJztnP2nnfl8w"
+API_KEY = ""
 
 client = genai.Client(api_key=API_KEY)
 
