@@ -13,25 +13,18 @@
       margin: 0;
       padding: 0;
     }
-
     .container {
       max-width: 600px;
       margin: auto;
       padding: 16px;
     }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 10px;
-    }
-
+    h2 { text-align: center; margin-bottom: 10px; }
     select {
       width: 100%;
       padding: 10px;
       font-size: 16px;
       margin-bottom: 12px;
     }
-
     .card {
       background: white;
       border-radius: 12px;
@@ -39,7 +32,6 @@
       margin-bottom: 16px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
-
     textarea, input {
       width: 100%;
       font-size: 16px;
@@ -49,7 +41,6 @@
       border: 1px solid #ccc;
       box-sizing: border-box;
     }
-
     button {
       width: 100%;
       margin-top: 10px;
@@ -59,22 +50,9 @@
       border: none;
       cursor: pointer;
     }
-
-    .primary {
-      background: #2563eb;
-      color: white;
-    }
-
-    .secondary {
-      background: #e5e7eb;
-      color: #111;
-    }
-
-    .speak {
-      background: #16a34a;
-      color: white;
-    }
-
+    .primary { background: #2563eb; color: white; }
+    .secondary { background: #e5e7eb; color: #111; }
+    .speak { background: #16a34a; color: white; }
     pre {
       background: #f1f5f9;
       padding: 10px;
@@ -84,7 +62,6 @@
       word-wrap: break-word;
       margin-top: 10px;
     }
-
     .footer {
       text-align: center;
       font-size: 13px;
@@ -101,8 +78,8 @@
 
   <!-- Language Selector -->
   <select id="language" onchange="setLanguage()">
+    <option value="hi" selected>हिन्दी</option>
     <option value="en">English</option>
-    <option value="hi">हिन्दी</option>
   </select>
 
   <!-- SCAN IMAGE -->
@@ -141,9 +118,10 @@
 </div>
 
 <script>
-let currentLang = "en";
+/* ================= STATE ================= */
+let currentLang = "hi";
 
-// ---------- UI TEXT ----------
+/* ================= UI TEXT ================= */
 const UI_TEXT = {
   en: {
     title: "SatyaMed",
@@ -171,9 +149,9 @@ const UI_TEXT = {
   }
 };
 
-// ---------- LANGUAGE ----------
+/* ================= LANGUAGE ================= */
 function setLanguage(){
-  currentLang = document.getElementById("language").value;
+  currentLang = language.value;
   const t = UI_TEXT[currentLang];
 
   title.innerText = t.title;
@@ -194,7 +172,7 @@ function setLanguage(){
 }
 setLanguage();
 
-// ---------- API CALLS ----------
+/* ================= API CALLS ================= */
 async function verify(){
   const res = await fetch("/check_text",{
     method:"POST",
@@ -202,7 +180,21 @@ async function verify(){
     body: JSON.stringify({ text: text.value, lang: currentLang })
   });
   const d = await res.json();
-  result.innerText = `Verdict: ${d.verdict}\n\nReason: ${d.reason}\nConfidence: ${d.confidence}`;
+  result.innerText =
+`Verdict: ${d.verdict}
+Confidence: ${d.confidence}
+
+Why:
+${d.why}
+
+Potential harm:
+${d.potential_harm}
+
+Correct information:
+${d.correct_information}
+
+What to do:
+${d.what_to_do}`;
 }
 
 async function askSafety(){
@@ -212,7 +204,23 @@ async function askSafety(){
     body: JSON.stringify({ question: question.value, lang: currentLang })
   });
   const d = await res.json();
-  safetyResult.innerText = d.answer;
+  safetyResult.innerText =
+`Answer:
+${d.short_answer}
+
+Why:
+${d.why}
+
+What to do:
+${d.what_to_do}
+
+What NOT to do:
+${d.what_not_to_do}
+
+When to see doctor:
+${d.when_to_see_doctor}
+
+Risk level: ${d.risk_level}`;
 }
 
 async function scanImage(){
@@ -225,10 +233,18 @@ async function scanImage(){
 
   const res = await fetch("/check_image",{ method:"POST", body: fd });
   const d = await res.json();
-  imageResult.innerText = `Category: ${d.category}\nWarning: ${d.warning}`;
+  imageResult.innerText =
+`Generic name: ${d.generic_name}
+Category: ${d.category}
+
+Warnings:
+${d.warnings}
+
+Advice:
+${d.advice}`;
 }
 
-// ---------- READ ALOUD (ANDROID + WEB) ----------
+/* ================= READ ALOUD ================= */
 function speak(id){
   const t = document.getElementById(id).innerText;
   if (!t) return;
@@ -242,14 +258,10 @@ function speak(id){
   }
 }
 
-// ---------- SHARE HANDLERS ----------
+/* ================= SHARE ================= */
 window.handleSharedText = function(t){
   text.value = t;
   verify();
-};
-
-window.handleSharedImage = function(){
-  alert("Image received. Please press Scan Image.");
 };
 </script>
 
