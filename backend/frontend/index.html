@@ -105,6 +105,15 @@
     <option value="hi">हिन्दी</option>
   </select>
 
+  <!-- SCAN IMAGE -->
+  <div class="card">
+    <h3 id="scanTitle">Scan Medicine Strip</h3>
+    <input type="file" id="imageInput" accept="image/*" capture="environment">
+    <button id="scanBtn" class="secondary" onclick="scanImage()">Scan Image</button>
+    <pre id="imageResult"></pre>
+    <button id="speakImageBtn" class="speak" onclick="speak('imageResult')">Read Aloud</button>
+  </div>
+
   <!-- VERIFY MESSAGE -->
   <div class="card">
     <h3 id="verifyTitle">Verify Health Message</h3>
@@ -123,15 +132,6 @@
     <button id="askBtn" class="primary" onclick="askSafety()">Ask</button>
     <pre id="safetyResult"></pre>
     <button id="speakSafetyBtn" class="speak" onclick="speak('safetyResult')">Read Aloud</button>
-  </div>
-
-  <!-- SCAN IMAGE -->
-  <div class="card">
-    <h3 id="scanTitle">Scan Medicine Strip</h3>
-    <input type="file" id="imageInput" accept="image/*" capture="environment">
-    <button id="scanBtn" class="secondary" onclick="scanImage()">Scan Image</button>
-    <pre id="imageResult"></pre>
-    <button id="speakImageBtn" class="speak" onclick="speak('imageResult')">Read Aloud</button>
   </div>
 
   <div class="footer">
