@@ -141,11 +141,9 @@
 </div>
 
 <script>
-const BASE_URL = "";
-
-// ---------- LANGUAGE UI ----------
 let currentLang = "en";
 
+// ---------- UI TEXT ----------
 const UI_TEXT = {
   en: {
     title: "SatyaMed",
@@ -173,89 +171,86 @@ const UI_TEXT = {
   }
 };
 
+// ---------- LANGUAGE ----------
 function setLanguage(){
   currentLang = document.getElementById("language").value;
   const t = UI_TEXT[currentLang];
 
-  document.getElementById("title").innerText = t.title;
-  document.getElementById("verifyTitle").innerText = t.verifyTitle;
-  document.getElementById("verifyBtn").innerText = t.verifyBtn;
-  document.getElementById("text").placeholder = t.verifyPlaceholder;
+  title.innerText = t.title;
+  verifyTitle.innerText = t.verifyTitle;
+  verifyBtn.innerText = t.verifyBtn;
+  text.placeholder = t.verifyPlaceholder;
 
-  document.getElementById("askTitle").innerText = t.askTitle;
-  document.getElementById("askBtn").innerText = t.askBtn;
-  document.getElementById("question").placeholder = t.askPlaceholder;
+  askTitle.innerText = t.askTitle;
+  askBtn.innerText = t.askBtn;
+  question.placeholder = t.askPlaceholder;
 
-  document.getElementById("scanTitle").innerText = t.scanTitle;
-  document.getElementById("scanBtn").innerText = t.scanBtn;
+  scanTitle.innerText = t.scanTitle;
+  scanBtn.innerText = t.scanBtn;
 
-  document.getElementById("speakVerifyBtn").innerText = t.speakBtn;
-  document.getElementById("speakSafetyBtn").innerText = t.speakBtn;
-  document.getElementById("speakImageBtn").innerText = t.speakBtn;
-
-  if (window.Android) {
-    Android.setLanguage(currentLang);
-  }
+  speakVerifyBtn.innerText = t.speakBtn;
+  speakSafetyBtn.innerText = t.speakBtn;
+  speakImageBtn.innerText = t.speakBtn;
 }
-
 setLanguage();
 
-// -------- VERIFY MESSAGE --------
+// ---------- API CALLS ----------
 async function verify(){
-  let text = document.getElementById("text").value;
-
-  let res = await fetch("/check_text",{
+  const res = await fetch("/check_text",{
     method:"POST",
     headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({text:text, lang: currentLang})
+    body: JSON.stringify({ text: text.value, lang: currentLang })
   });
-
-  let data = await res.json();
-  document.getElementById("result").innerText =
-    JSON.stringify(data,null,2);
+  const d = await res.json();
+  result.innerText = `Verdict: ${d.verdict}\n\nReason: ${d.reason}\nConfidence: ${d.confidence}`;
 }
 
-// -------- ASK SAFETY --------
 async function askSafety(){
-  let q = document.getElementById("question").value;
-
-  let res = await fetch("/ask_safety",{
+  const res = await fetch("/ask_safety",{
     method:"POST",
     headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({question:q, lang: currentLang})
+    body: JSON.stringify({ question: question.value, lang: currentLang })
   });
-
-  let data = await res.json();
-  document.getElementById("safetyResult").innerText =
-    JSON.stringify(data,null,2);
+  const d = await res.json();
+  safetyResult.innerText = d.answer;
 }
 
-// -------- SCAN IMAGE --------
 async function scanImage(){
-  let file = document.getElementById("imageInput").files[0];
-  if (!file) return;
+  const f = imageInput.files[0];
+  if (!f) return;
 
-  let formData = new FormData();
-  formData.append("file", file);
-  formData.append("lang", currentLang);
+  const fd = new FormData();
+  fd.append("file", f);
+  fd.append("lang", currentLang);
 
-  let res = await fetch("/check_image",{
-    method:"POST",
-    body: formData
-  });
-
-  let data = await res.json();
-  document.getElementById("imageResult").innerText =
-    JSON.stringify(data,null,2);
+  const res = await fetch("/check_image",{ method:"POST", body: fd });
+  const d = await res.json();
+  imageResult.innerText = `Category: ${d.category}\nWarning: ${d.warning}`;
 }
 
-// -------- VOICE OUTPUT --------
-function speak(targetId){
-  let text = document.getElementById(targetId).innerText;
-  if (window.Android && text) {
-    Android.speak(text);
+// ---------- READ ALOUD (ANDROID + WEB) ----------
+function speak(id){
+  const t = document.getElementById(id).innerText;
+  if (!t) return;
+
+  if (window.Android) {
+    Android.speak(t);
+  } else {
+    const u = new SpeechSynthesisUtterance(t);
+    u.lang = currentLang === "hi" ? "hi-IN" : "en-IN";
+    speechSynthesis.speak(u);
   }
 }
+
+// ---------- SHARE HANDLERS ----------
+window.handleSharedText = function(t){
+  text.value = t;
+  verify();
+};
+
+window.handleSharedImage = function(){
+  alert("Image received. Please press Scan Image.");
+};
 </script>
 
 </body>
