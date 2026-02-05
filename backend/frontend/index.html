@@ -2,43 +2,203 @@
 <html>
 <head>
   <title>SatyaMed</title>
+
+  <!-- Mobile viewport -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #f5f7fb;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      padding: 16px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    select {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    textarea, input {
+      width: 100%;
+      font-size: 16px;
+      padding: 10px;
+      margin-top: 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .primary {
+      background: #2563eb;
+      color: white;
+    }
+
+    .secondary {
+      background: #e5e7eb;
+      color: #111;
+    }
+
+    .speak {
+      background: #16a34a;
+      color: white;
+    }
+
+    pre {
+      background: #f1f5f9;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 14px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      margin-top: 10px;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 13px;
+      color: #555;
+      margin-top: 20px;
+    }
+  </style>
 </head>
+
 <body>
-  <h2>SatyaMed</h2>
+<div class="container">
 
-  <!-- ================= VERIFY MESSAGE ================= -->
-  <h3>Verify Health Message</h3>
-  <textarea id="text" rows="4" cols="40"
-    placeholder="Paste health message here"></textarea><br><br>
-  <button onclick="verify()">Verify</button>
+  <h2 id="title">SatyaMed</h2>
 
-  <pre id="result"></pre>
+  <!-- Language Selector -->
+  <select id="language" onchange="setLanguage()">
+    <option value="en">English</option>
+    <option value="hi">हिन्दी</option>
+  </select>
 
-  <hr>
+  <!-- VERIFY MESSAGE -->
+  <div class="card">
+    <h3 id="verifyTitle">Verify Health Message</h3>
+    <textarea id="text" rows="4"
+      placeholder="Paste health message here"></textarea>
+    <button id="verifyBtn" class="primary" onclick="verify()">Verify</button>
+    <pre id="result"></pre>
+    <button id="speakVerifyBtn" class="speak" onclick="speak('result')">Read Aloud</button>
+  </div>
 
-  <!-- ================= ASK SAFETY ================= -->
-  <h3>Ask Medicine Safety Question</h3>
-  <input id="question" size="40"
-    placeholder="e.g. Can I take antibiotics for cold?"><br><br>
-  <button onclick="askSafety()">Ask</button>
+  <!-- ASK SAFETY -->
+  <div class="card">
+    <h3 id="askTitle">Ask Medicine Safety Question</h3>
+    <input id="question"
+      placeholder="e.g. Can I take antibiotics for cold?">
+    <button id="askBtn" class="primary" onclick="askSafety()">Ask</button>
+    <pre id="safetyResult"></pre>
+    <button id="speakSafetyBtn" class="speak" onclick="speak('safetyResult')">Read Aloud</button>
+  </div>
 
-  <pre id="safetyResult"></pre>
+  <!-- SCAN IMAGE -->
+  <div class="card">
+    <h3 id="scanTitle">Scan Medicine Strip</h3>
+    <input type="file" id="imageInput" accept="image/*" capture="environment">
+    <button id="scanBtn" class="secondary" onclick="scanImage()">Scan Image</button>
+    <pre id="imageResult"></pre>
+    <button id="speakImageBtn" class="speak" onclick="speak('imageResult')">Read Aloud</button>
+  </div>
 
-  <hr>
+  <div class="footer">
+    SatyaMed • AI for Safe Medicines
+  </div>
 
-  <!-- ================= SCAN IMAGE ================= -->
-  <h3>Scan Medicine Strip</h3>
-  <input type="file" id="imageInput"><br><br>
-  <button onclick="scanImage()">Scan Image</button>
-
-  <pre id="imageResult"></pre>
+</div>
 
 <script>
-const BASE_URL = ""; 
+const BASE_URL = "";
 
-function setSharedText(t){
-  document.getElementById("text").value = t;
+// ---------- LANGUAGE UI ----------
+let currentLang = "en";
+
+const UI_TEXT = {
+  en: {
+    title: "SatyaMed",
+    verifyTitle: "Verify Health Message",
+    verifyBtn: "Verify",
+    verifyPlaceholder: "Paste health message here",
+    askTitle: "Ask Medicine Safety Question",
+    askPlaceholder: "e.g. Can I take antibiotics for cold?",
+    askBtn: "Ask",
+    scanTitle: "Scan Medicine Strip",
+    scanBtn: "Scan Image",
+    speakBtn: "Read Aloud"
+  },
+  hi: {
+    title: "सत्यामेड",
+    verifyTitle: "स्वास्थ्य संदेश जांचें",
+    verifyBtn: "जांचें",
+    verifyPlaceholder: "यहाँ स्वास्थ्य संदेश चिपकाएँ",
+    askTitle: "दवा सुरक्षा प्रश्न पूछें",
+    askPlaceholder: "जैसे: क्या सर्दी में एंटीबायोटिक लेना सही है?",
+    askBtn: "पूछें",
+    scanTitle: "दवा की तस्वीर जांचें",
+    scanBtn: "तस्वीर जांचें",
+    speakBtn: "आवाज़ में सुनें"
+  }
+};
+
+function setLanguage(){
+  currentLang = document.getElementById("language").value;
+  const t = UI_TEXT[currentLang];
+
+  document.getElementById("title").innerText = t.title;
+  document.getElementById("verifyTitle").innerText = t.verifyTitle;
+  document.getElementById("verifyBtn").innerText = t.verifyBtn;
+  document.getElementById("text").placeholder = t.verifyPlaceholder;
+
+  document.getElementById("askTitle").innerText = t.askTitle;
+  document.getElementById("askBtn").innerText = t.askBtn;
+  document.getElementById("question").placeholder = t.askPlaceholder;
+
+  document.getElementById("scanTitle").innerText = t.scanTitle;
+  document.getElementById("scanBtn").innerText = t.scanBtn;
+
+  document.getElementById("speakVerifyBtn").innerText = t.speakBtn;
+  document.getElementById("speakSafetyBtn").innerText = t.speakBtn;
+  document.getElementById("speakImageBtn").innerText = t.speakBtn;
+
+  if (window.Android) {
+    Android.setLanguage(currentLang);
+  }
 }
+
+setLanguage();
 
 // -------- VERIFY MESSAGE --------
 async function verify(){
@@ -47,7 +207,7 @@ async function verify(){
   let res = await fetch("/check_text",{
     method:"POST",
     headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({text:text})
+    body: JSON.stringify({text:text, lang: currentLang})
   });
 
   let data = await res.json();
@@ -62,7 +222,7 @@ async function askSafety(){
   let res = await fetch("/ask_safety",{
     method:"POST",
     headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({question:q})
+    body: JSON.stringify({question:q, lang: currentLang})
   });
 
   let data = await res.json();
@@ -73,9 +233,11 @@ async function askSafety(){
 // -------- SCAN IMAGE --------
 async function scanImage(){
   let file = document.getElementById("imageInput").files[0];
+  if (!file) return;
 
   let formData = new FormData();
   formData.append("file", file);
+  formData.append("lang", currentLang);
 
   let res = await fetch("/check_image",{
     method:"POST",
@@ -85,6 +247,14 @@ async function scanImage(){
   let data = await res.json();
   document.getElementById("imageResult").innerText =
     JSON.stringify(data,null,2);
+}
+
+// -------- VOICE OUTPUT --------
+function speak(targetId){
+  let text = document.getElementById(targetId).innerText;
+  if (window.Android && text) {
+    Android.speak(text);
+  }
 }
 </script>
 

@@ -1,6 +1,6 @@
 #pip install "google-genai>=0.1.0" fastapi uvicorn python-multipart pydantic
 import json
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, Form ,File, HTTPException
 from pydantic import BaseModel
 from google import genai
 from google.genai import types
@@ -38,9 +38,11 @@ app.add_middleware(
 
 class TextRequest(BaseModel):
     text: str
+    lang: str ="en"
 
 class SafetyRequest(BaseModel):
     question: str
+    lang: str ="en"
 
 # Helper to clean JSON response (removes ```json ... ``` if present)
 def parse_gemini_json(text_response: str):
@@ -63,6 +65,7 @@ def check_text(req: TextRequest):
         prompt = f"""
         You are a medical safety assistant.
         Classify this claim as: misinformation or reliable.
+        Respond STRICTLY in this language: {req.lang}
         
         Claim: {req.text}
         """
@@ -98,6 +101,7 @@ def ask_safety(req: SafetyRequest):
     try:
         prompt = f"""
         You are a medical safety assistant. Answer safely. Do NOT prescribe drugs.
+        Respond STRICTLY in this language: {req.lang}
         Question: {req.question}
         """
         
@@ -125,16 +129,20 @@ def ask_safety(req: SafetyRequest):
 # CHECK IMAGE
 # ---------------------------
 @app.post("/check_image")
-async def check_image(file: UploadFile = File(...)):
+async def check_image(
+    file: UploadFile = File(...),
+    lang: str = Form("en")
+    ):
     try:
         # 1. Read the bytes
         image_bytes = await file.read()
         
         # 2. Prepare the prompt part
-        text_part = types.Part.from_text(text="""
+        text_part = types.Part.from_text(text=f"""
         Look at this medicine strip.
         Classify ONLY as: antibiotic, steroid, common_otc, or unknown.
         Provide a warning if necessary.
+        Respond STRICTLY in this language: {lang}
         """)
 
         # 3. Prepare the image part (CRITICAL FIX)
