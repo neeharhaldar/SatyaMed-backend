@@ -81,7 +81,6 @@ RULES:
 - Do not shame the user.
 
 Respond STRICTLY in this language: {req.lang}
-Respond STRICTLY in valid JSON.
 
 Claim:
 {req.text}
@@ -145,7 +144,6 @@ RULES:
 - Be conservative and clear.
 
 Respond STRICTLY in this language: {req.lang}
-Respond STRICTLY in valid JSON.
 
 Question:
 {req.question}
@@ -217,7 +215,6 @@ RULES:
 - Encourage doctor consultation.
 
 Respond STRICTLY in this language: {lang}
-Respond STRICTLY in valid JSON.
 """)
 
     image_part = types.Part.from_bytes(
