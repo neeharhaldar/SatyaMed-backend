@@ -149,6 +149,45 @@ const UI_TEXT = {
   }
 };
 
+const LABEL_TEXT = {
+  en: {
+    verdict: "Verdict",
+    confidence: "Confidence",
+    why: "Why",
+    potential_harm: "Potential harm",
+    correct_information: "Correct information",
+    what_to_do: "What to do",
+
+    answer: "Answer",
+    what_not_to_do: "What NOT to do",
+    when_to_see_doctor: "When to see a doctor",
+    risk_level: "Risk level",
+
+    generic_name: "Generic name",
+    category: "Category",
+    warnings: "Warnings",
+    advice: "Advice"
+  },
+  hi: {
+    verdict: "निर्णय",
+    confidence: "विश्वास स्तर",
+    why: "क्यों",
+    potential_harm: "संभावित नुकसान",
+    correct_information: "सही जानकारी",
+    what_to_do: "क्या करें",
+
+    answer: "उत्तर",
+    what_not_to_do: "क्या न करें",
+    when_to_see_doctor: "डॉक्टर से कब मिलें",
+    risk_level: "जोखिम स्तर",
+
+    generic_name: "दवा का नाम",
+    category: "श्रेणी",
+    warnings: "चेतावनी",
+    advice: "सलाह"
+  }
+};
+
 /* ================= LANGUAGE ================= */
 function setLanguage(){
   currentLang = language.value;
@@ -179,21 +218,24 @@ async function verify(){
     headers:{"Content-Type":"application/json"},
     body: JSON.stringify({ text: text.value, lang: currentLang })
   });
-  const d = await res.json();
-  result.innerText =
-`Verdict: ${d.verdict}
-Confidence: ${d.confidence}
 
-Why:
+  const d = await res.json();
+  const L = LABEL_TEXT[currentLang];
+
+  result.innerText =
+`${L.verdict}: ${d.verdict}
+${L.confidence}: ${d.confidence}
+
+${L.why}:
 ${d.why}
 
-Potential harm:
+${L.potential_harm}:
 ${d.potential_harm}
 
-Correct information:
+${L.correct_information}:
 ${d.correct_information}
 
-What to do:
+${L.what_to_do}:
 ${d.what_to_do}`;
 }
 
@@ -203,24 +245,27 @@ async function askSafety(){
     headers:{"Content-Type":"application/json"},
     body: JSON.stringify({ question: question.value, lang: currentLang })
   });
+
   const d = await res.json();
+  const L = LABEL_TEXT[currentLang];
+
   safetyResult.innerText =
-`Answer:
+`${L.answer}:
 ${d.short_answer}
 
-Why:
+${L.why}:
 ${d.why}
 
-What to do:
+${L.what_to_do}:
 ${d.what_to_do}
 
-What NOT to do:
+${L.what_not_to_do}:
 ${d.what_not_to_do}
 
-When to see doctor:
+${L.when_to_see_doctor}:
 ${d.when_to_see_doctor}
 
-Risk level: ${d.risk_level}`;
+${L.risk_level}: ${d.risk_level}`;
 }
 
 async function scanImage(){
@@ -231,16 +276,19 @@ async function scanImage(){
   fd.append("file", f);
   fd.append("lang", currentLang);
 
-  const res = await fetch("/check_image",{ method:"POST", body: fd });
+  const res = await fetch("/check_image", { method:"POST", body: fd });
   const d = await res.json();
-  imageResult.innerText =
-`Generic name: ${d.generic_name}
-Category: ${d.category}
 
-Warnings:
+  const L = LABEL_TEXT[currentLang];
+
+  imageResult.innerText =
+`${L.generic_name}: ${d.generic_name}
+${L.category}: ${d.category}
+
+${L.warnings}:
 ${d.warnings}
 
-Advice:
+${L.advice}:
 ${d.advice}`;
 }
 
