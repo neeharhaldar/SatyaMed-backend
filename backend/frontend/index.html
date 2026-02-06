@@ -77,7 +77,7 @@
   <h2 id="title">SatyaMed</h2>
 
   <!-- Language Selector -->
-  <select id="language" onchange="setLanguage()">
+  <select id="language🌐" onchange="setLanguage()">
     <option value="hi" selected>हिन्दी</option>
     <option value="en">English</option>
   </select>
@@ -86,9 +86,9 @@
   <div class="card">
     <h3 id="scanTitle">Scan Medicine Strip</h3>
     <input type="file" id="imageInput" accept="image/*" capture="environment">
-    <button id="scanBtn" class="secondary" onclick="scanImage()">Scan Image</button>
+    <button id="scanBtn" class="secondary" onclick="scanImage()">Scan Image🔍</button>
     <pre id="imageResult"></pre>
-    <button id="speakImageBtn" class="speak" onclick="speak('imageResult')">Read Aloud</button>
+    <button id="speakImageBtn" class="speak" onclick="speak('imageResult')">Read Aloud📢</button>
   </div>
 
   <!-- VERIFY MESSAGE -->
@@ -96,9 +96,9 @@
     <h3 id="verifyTitle">Verify Health Message</h3>
     <textarea id="text" rows="4"
       placeholder="Paste health message here"></textarea>
-    <button id="verifyBtn" class="primary" onclick="verify()">Verify</button>
+    <button id="verifyBtn" class="primary" onclick="verify()">Verify🔍</button>
     <pre id="result"></pre>
-    <button id="speakVerifyBtn" class="speak" onclick="speak('result')">Read Aloud</button>
+    <button id="speakVerifyBtn" class="speak" onclick="speak('result')">Read Aloud📢</button>
   </div>
 
   <!-- ASK SAFETY -->
@@ -106,9 +106,9 @@
     <h3 id="askTitle">Ask Medicine Safety Question</h3>
     <input id="question"
       placeholder="e.g. Can I take antibiotics for cold?">
-    <button id="askBtn" class="primary" onclick="askSafety()">Ask</button>
+    <button id="askBtn" class="primary" onclick="askSafety()">Ask🔍</button>
     <pre id="safetyResult"></pre>
-    <button id="speakSafetyBtn" class="speak" onclick="speak('safetyResult')">Read Aloud</button>
+    <button id="speakSafetyBtn" class="speak" onclick="speak('safetyResult')">Read Aloud📢</button>
   </div>
 
   <div class="footer">
@@ -126,26 +126,26 @@ const UI_TEXT = {
   en: {
     title: "SatyaMed",
     verifyTitle: "Verify Health Message",
-    verifyBtn: "Verify",
+    verifyBtn: "Verify🔍",
     verifyPlaceholder: "Paste health message here",
     askTitle: "Ask Medicine Safety Question",
     askPlaceholder: "e.g. Can I take antibiotics for cold?",
-    askBtn: "Ask",
+    askBtn: "Ask🔍",
     scanTitle: "Scan Medicine Strip",
-    scanBtn: "Scan Image",
-    speakBtn: "Read Aloud"
+    scanBtn: "Scan Image🔍",
+    speakBtn: "Read Aloud📢"
   },
   hi: {
     title: "सत्यामेड",
     verifyTitle: "स्वास्थ्य संदेश जांचें",
-    verifyBtn: "जांचें",
+    verifyBtn: "जांचें🔍",
     verifyPlaceholder: "यहाँ स्वास्थ्य संदेश चिपकाएँ",
     askTitle: "दवा सुरक्षा प्रश्न पूछें",
     askPlaceholder: "जैसे: क्या सर्दी में एंटीबायोटिक लेना सही है?",
-    askBtn: "पूछें",
+    askBtn: "पूछें🔍",
     scanTitle: "दवा की तस्वीर जांचें",
-    scanBtn: "तस्वीर जांचें",
-    speakBtn: "आवाज़ में सुनें"
+    scanBtn: "तस्वीर जांचें🔍",
+    speakBtn: "आवाज़ में सुनें📢"
   }
 };
 
